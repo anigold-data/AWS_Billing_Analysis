@@ -1,0 +1,21 @@
+name: CI - Model Validation
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-model:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Tabular Editor CLI
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/TabularEditor/TabularEditor/releases/latest/download/TabularEditor.Portable.zip" -OutFile "TE.zip"
+          Expand-Archive -Path "TE.zip" -DestinationPath "TE"
+
+      - name: Run BPA analysis
+        run: |
+          .\TE\TabularEditor.exe "model/AWS_Billing_Analysis.SemanticModel" -A "scripts/BPARules.json" -V -T "scripts/BPAResults.trx"
