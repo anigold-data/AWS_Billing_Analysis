@@ -2,12 +2,12 @@
 **Power BI specific project: RLS/OLS, Tabular Editor, DAX Studio, GitHub CI/CD**
 
 ### Owner: Opeyemi Aniwura
-### Estimated duration: 6–8 weeks at a few hours/week
+### Estimated duration: 6–7 weeks at a few hours/week
 ---
 
 ## Goal
 
-**Goal:** Deliver one repo, one working Power BI solution. It starts from analyzing synthetically generated raw data to delivering a version-controlled, CI/CD-deployed semantic model.
+**Goal:** Deliver one repo, one working Power BI solution which starts from analyzing synthetically generated raw data to finally delivering a version-controlled, CI/CD-deployed semantic model.
 
 ---
 
@@ -27,9 +27,8 @@
 AWS Billing Analysis/
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml
-│       ├── cd.yml    
-│       └── deploy.yml 
+│       ├── ci.yml    
+│       └── cd.yml 
 ├── data/
 │   └── aws_cloudcost_cur_dataset.csv           Synthetic CUR(Cost and Usage Report) CSV file
 ├── model/                                      (PBIP + TMDL semantic model)
@@ -48,8 +47,7 @@ AWS Billing Analysis/
 │   ├── dax_performance_notes.md           
 │   ├── project_plan.md      
 │   ├── data-dictionary.md                      Explains the data 
-│   ├── security-matrix.md                      Illustrates the restrictions imposed (view related)
-│   └── performance-tuning.md
+│   └── security-matrix.md                      Illustrates the restrictions imposed (view related)
 ├── scripts/
 │   └── BPARules.json                           Tabular Editor's Best Practice Analyzer (BPA)
 └── README.md
@@ -59,7 +57,7 @@ AWS Billing Analysis/
 
 ## Phase 2 — Synthetic dataset generation (Week 1-2, ~3-4 hrs)
 
-It should be emphasized that the dataset used in this portfolio project was sythentically generated. While it may bear resemblance to real world data, it has no reference to any real world AWS data and should be regarded as fictitious. The data simulates AWS billing data mirroring real Cost and Usage Report (CUR) fields:
+It should be emphasized that the dataset used in this portfolio project was sythentically generated. While it may bear resemblance to real world data, it has no reference to any real world AWS data and should be regarded as fictitious. The data basically simulates AWS billing data by mirroring real Cost and Usage Report (CUR) fields such as:
 
 - `usage_date`, `linked_account_id`, `account_name`, `business_unit`
 - `service` (EC2, S3, RDS, Lambda, CloudFront, VPC, ElastiCache, etc.)

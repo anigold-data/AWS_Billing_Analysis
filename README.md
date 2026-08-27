@@ -70,8 +70,7 @@ AWS Billing Analysis/
 │   ├── project_plan.md
 │   ├── data-dictionary.md
 │   ├── security-matrix.md
-│   ├── model-metadata.json                                 #auto-generated after running ci.yml
-│   └── performance-tuning.md
+│   └── model-metadata.json                                 #auto-generated after running ci.yml
 ├── scripts/
 │   └── BPARules.json
 └── README.md
