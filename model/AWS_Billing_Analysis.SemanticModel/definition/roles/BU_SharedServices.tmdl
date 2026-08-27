@@ -1,0 +1,13 @@
+role BU_SharedServices
+	modelPermission: read
+
+	tablePermission DimAccount = [business_unit] == "SharedServices"
+
+		columnPermission linked_account_id = none
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = none
+
+	annotation PBI_Id = 56228f38c9bd496985558adb58699f9b
+

@@ -1,0 +1,318 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "db292f160ac4d29644d5",
+  "position": {
+    "x": 841.86561264822137,
+    "y": 132.55335968379447,
+    "z": 5000,
+    "height": 307.60474308300394,
+    "width": 438.13438735177863,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "esriVisual",
+    "query": {
+      "queryState": {
+        "Latitude": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimRegion"
+                    }
+                  },
+                  "Property": "latitude"
+                }
+              },
+              "queryRef": "Dim_Region.Latitude",
+              "nativeQueryRef": "Latitude"
+            }
+          ]
+        },
+        "Location": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimRegion"
+                    }
+                  },
+                  "Property": "region"
+                }
+              },
+              "queryRef": "Dim_Region.region",
+              "nativeQueryRef": "region"
+            }
+          ]
+        },
+        "Longitude": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimRegion"
+                    }
+                  },
+                  "Property": "longitude"
+                }
+              },
+              "queryRef": "Dim_Region.Longitude",
+              "nativeQueryRef": "Longitude"
+            }
+          ]
+        },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Cost"
+                }
+              },
+              "queryRef": "_Measures.Total Cost",
+              "nativeQueryRef": "Total Cost"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Total Cost"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "mapTools": [
+        {
+          "properties": {
+            "basemaps": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "share": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "layerVisible": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "selection": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "geoSearch": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "analysis": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "settings": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "mapObject": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"portalUrl\":\"https://www.arcgis.com\",\"version\":\"2.4\",\"isAuthorNamedUser\":false,\"map\":{\"webmap\":{\"is3d\":false,\"itemData\":{\"operationalLayers\":[{\"id\":\"MyLayer\",\"visibility\":true,\"opacity\":1,\"minScale\":0,\"maxScale\":0,\"refreshInterval\":0,\"title\":\"Coordinates\",\"objectIdField\":\"objectId\",\"type\":\"DataLayer\",\"layerType\":\"ArcGISFeatureLayer\",\"popupEnabled\":true,\"disablePopup\":false,\"visible\":true,\"geometryType\":\"point\",\"source\":[{\"attributes\":{},\"geometry\":{\"x\":0,\"y\":0,\"type\":\"point\",\"spatialReference\":{\"latestWkid\":3857,\"wkid\":102100}}}],\"spatialReference\":{\"latestWkid\":3857,\"wkid\":102100},\"esriMaps\":{\"isTimeEnabled\":\"false\",\"clusterInfo\":null,\"lastShareInfo\":null},\"timeInfo\":null,\"showLabels\":true,\"featureCollection\":{\"layers\":[{\"popupInfo\":{\"popupElements\":[{\"type\":\"fields\",\"fieldInfos\":[{\"fieldName\":\"expression/Dim_Region_Latitude\",\"isEditable\":true,\"label\":\"latitude\",\"visible\":true},{\"fieldName\":\"Dim_Region_region\",\"isEditable\":true,\"label\":\"region\",\"tooltip\":\"\",\"visible\":true},{\"fieldName\":\"expression/Dim_Region_Longitude\",\"isEditable\":true,\"label\":\"longitude\",\"visible\":true},{\"fieldName\":\"expression/_Measures_Total_20Cost\",\"isEditable\":true,\"label\":\"Total Cost\",\"visible\":true},{\"fieldName\":\"ROW_ID\",\"format\":{\"digitSeparator\":true,\"places\":0},\"isEditable\":true,\"label\":\"ROW_ID\",\"tooltip\":\"\",\"visible\":true}]}],\"expressionInfos\":[{\"name\":\"Dim_Region_Latitude\",\"title\":\"latitude\",\"expression\":\"// PowerBI number format: #,0.00\\n\\nif (IsEmpty($feature[\\\"Dim_Region_Latitude\\\"]))\\n{\\n  return $feature[\\\"Dim_Region_Latitude\\\"] \\n}\\nText($feature[\\\"Dim_Region_Latitude\\\"], \\\"#,###.00\\\")\"},{\"name\":\"Dim_Region_Longitude\",\"title\":\"longitude\",\"expression\":\"// PowerBI number format: #,0.00\\n\\nif (IsEmpty($feature[\\\"Dim_Region_Longitude\\\"]))\\n{\\n  return $feature[\\\"Dim_Region_Longitude\\\"] \\n}\\nText($feature[\\\"Dim_Region_Longitude\\\"], \\\"#,###.00\\\")\"},{\"name\":\"_Measures_Total_20Cost\",\"title\":\"Total Cost\",\"expression\":\"// PowerBI number format: \\\"£\\\"#,0.00;-\\\"£\\\"#,0.00;\\\"£\\\"#,0.00\\n\\nif (IsEmpty($feature[\\\"_Measures_Total_20Cost\\\"]))\\n{\\n  return $feature[\\\"_Measures_Total_20Cost\\\"] \\n}\\nif (Typeof($feature[\\\"_Measures_Total_20Cost\\\"]) != \\\"Date\\\" && $feature[\\\"_Measures_Total_20Cost\\\"] < 0)\\n{\\n  return \\\"-\\\" + \\\"£\\\" + Text(Abs($feature[\\\"_Measures_Total_20Cost\\\"]), \\\"#,###.00\\\") \\n} else if (Typeof($feature[\\\"_Measures_Total_20Cost\\\"]) != \\\"Date\\\" && $feature[\\\"_Measures_Total_20Cost\\\"] == 0)\\n{\\n  return \\\"£\\\" + Text($feature[\\\"_Measures_Total_20Cost\\\"], \\\"#,###.00\\\") \\n} else\\n{\\n  return \\\"£\\\" + Text($feature[\\\"_Measures_Total_20Cost\\\"], \\\"#,###.00\\\") \\n}\"}],\"fieldInfos\":[{\"fieldName\":\"Dim_Region_Latitude\",\"format\":{\"digitSeparator\":true,\"places\":2},\"isEditable\":true,\"label\":\"latitude\",\"tooltip\":\"\",\"visible\":false},{\"fieldName\":\"expression/Dim_Region_Latitude\",\"isEditable\":true,\"label\":\"latitude\",\"visible\":true},{\"fieldName\":\"Dim_Region_region\",\"isEditable\":true,\"label\":\"region\",\"tooltip\":\"\",\"visible\":true},{\"fieldName\":\"Dim_Region_Longitude\",\"format\":{\"digitSeparator\":true,\"places\":2},\"isEditable\":true,\"label\":\"longitude\",\"tooltip\":\"\",\"visible\":false},{\"fieldName\":\"expression/Dim_Region_Longitude\",\"isEditable\":true,\"label\":\"longitude\",\"visible\":true},{\"fieldName\":\"_Measures_Total_20Cost\",\"format\":{\"digitSeparator\":true,\"places\":2},\"isEditable\":true,\"label\":\"Total Cost\",\"tooltip\":\"\",\"visible\":false},{\"fieldName\":\"expression/_Measures_Total_20Cost\",\"isEditable\":true,\"label\":\"Total Cost\",\"visible\":true},{\"fieldName\":\"ROW_ID\",\"format\":{\"digitSeparator\":true,\"places\":0},\"isEditable\":true,\"label\":\"ROW_ID\",\"tooltip\":\"\",\"visible\":true}],\"title\":\"\",\"actions\":[]},\"layerDefinition\":{\"objectIdField\":\"objectId\",\"fields\":[{\"alias\":\"objectId\",\"editable\":false,\"name\":\"objectId\",\"nullable\":false,\"type\":\"esriFieldTypeOID\"},{\"alias\":\"latitude\",\"editable\":true,\"name\":\"Dim_Region_Latitude\",\"nullable\":true,\"type\":\"esriFieldTypeDouble\"},{\"alias\":\"region\",\"editable\":true,\"length\":-1,\"name\":\"Dim_Region_region\",\"nullable\":true,\"type\":\"esriFieldTypeString\"},{\"alias\":\"longitude\",\"editable\":true,\"name\":\"Dim_Region_Longitude\",\"nullable\":true,\"type\":\"esriFieldTypeDouble\"},{\"alias\":\"Total Cost\",\"editable\":true,\"name\":\"_Measures_Total_20Cost\",\"nullable\":true,\"type\":\"esriFieldTypeDouble\"},{\"alias\":\"ROW_ID\",\"editable\":true,\"name\":\"ROW_ID\",\"nullable\":true,\"type\":\"esriFieldTypeInteger\"}],\"geometryType\":\"point\",\"drawingInfo\":{\"renderer\":{\"authoringInfo\":{\"classificationMethod\":\"esriClassifyNaturalBreaks\",\"type\":\"classedSize\"},\"type\":\"classBreaks\",\"visualVariables\":[],\"classBreakInfos\":[{\"classMaxValue\":226508.603035,\"symbol\":{\"type\":\"esriSMS\",\"color\":[17,141,255,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":3,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,204],\"width\":1,\"style\":\"esriSLSSolid\"}}},{\"classMaxValue\":628439.846969,\"symbol\":{\"type\":\"esriSMS\",\"color\":[17,141,255,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":9.75,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,204],\"width\":1,\"style\":\"esriSLSSolid\"}}},{\"classMaxValue\":1654861.025785,\"symbol\":{\"type\":\"esriSMS\",\"color\":[17,141,255,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":16.5,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,204],\"width\":1,\"style\":\"esriSLSSolid\"}}},{\"classMaxValue\":1889826.929221,\"symbol\":{\"type\":\"esriSMS\",\"color\":[17,141,255,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":23.25,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,204],\"width\":1,\"style\":\"esriSLSSolid\"}}},{\"classMaxValue\":1926386.1675299616,\"symbol\":{\"type\":\"esriSMS\",\"color\":[17,141,255,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":30,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,204],\"width\":1,\"style\":\"esriSLSSolid\"}}}],\"defaultLabel\":\"Other\",\"defaultSymbol\":{\"type\":\"esriSMS\",\"color\":[128,128,128,255],\"angle\":0,\"xoffset\":0,\"yoffset\":0,\"size\":3,\"style\":\"esriSMSCircle\",\"outline\":{\"type\":\"esriSLS\",\"color\":[255,255,255,64],\"width\":0.75,\"style\":\"esriSLSSolid\"}},\"field\":\"_Measures_Total_20Cost\",\"minValue\":226508.60303500132},\"transparency\":0},\"featureReduction\":null,\"locationProvider\":{\"type\":\"coordinates\",\"lookupFields\":[{\"lookupField\":\"xFieldName\",\"outField\":\"Dim_Region_Longitude\"},{\"lookupField\":\"yFieldName\",\"outField\":\"Dim_Region_Latitude\"}],\"sourceSR\":4326,\"targetSR\":3857},\"minScale\":0,\"maxScale\":0,\"definitionExpression\":null,\"templates\":[{\"name\":\"New Feature\",\"description\":\"\",\"prototype\":{\"attributes\":{\"Dim_Region_Latitude\":null,\"Dim_Region_region\":null,\"Dim_Region_Longitude\":null,\"_Measures_Total_20Cost\":null,\"ROW_ID\":null}}}],\"elevationInfo\":null,\"name\":\"Coordinates\",\"type\":\"DataLayer\",\"queryParameters\":{\"tableId\":\"\"}},\"featureSet\":{\"features\":[{\"attributes\":{},\"geometry\":{\"x\":0,\"y\":0,\"type\":\"point\",\"spatialReference\":{\"latestWkid\":3857,\"wkid\":102100}}}]}}]}}],\"tables\":[],\"baseMap\":{\"baseMapLayers\":[{\"id\":\"VectorTile_3287\",\"opacity\":1,\"title\":\"OpenStreetMap Style\",\"visibility\":true,\"layerType\":\"VectorTileLayer\",\"styleUrl\":\"https://cdn.arcgis.com/sharing/rest/content/items/165d7a1e43164d828064eb2027e219d5/resources/styles/root.json\"}],\"title\":\"OpenStreetMap Style\",\"origItemId\":\"c29cfb7875fc4b97b58ba6987c460862\"},\"version\":\"2.26\",\"authoringApp\":\"ArcGIS for Power BI\",\"authoringAppVersion\":\"2026.2.992\",\"bookmarks\":[],\"initialState\":{\"viewpoint\":{\"targetGeometry\":{\"spatialReference\":{\"latestWkid\":3857,\"wkid\":102100},\"xmin\":-54649237.152981415,\"ymin\":-8500370.799268652,\"xmax\":-22088286.095957384,\"ymax\":11537137.543515366}}}}},\"webmapExtensions\":{\"format\":2}},\"embedCheckPassed\":false}'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "mapControls": [
+        {
+          "properties": {
+            "zoomTools": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "lockMapExtent": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showHome": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "featureInfo": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "theme": [
+        {
+          "properties": {
+            "enable": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cost by AWS Region'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.1
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "preset": {
+              "expr": {
+                "Literal": {
+                  "Value": "'CenterLeft'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

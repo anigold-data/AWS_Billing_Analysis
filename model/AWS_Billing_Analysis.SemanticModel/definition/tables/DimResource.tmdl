@@ -1,0 +1,41 @@
+/// Describes each individual billed resource (a specific EC2 instance, S3 bucket, etc.) and its availability zone
+table DimResource
+	lineageTag: bc2eecdc-c364-4742-9fbe-b7b34ad2b5ed
+
+	column resource_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 72163931-af66-4fcc-9c08-d62bd08c41d4
+		summarizeBy: none
+		sourceColumn: resource_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Unique identifier for the specific resource (instance, bucket, table, etc.)
+	column resource_id
+		dataType: string
+		lineageTag: 9de00ec6-a04c-4e29-9108-5bdefe0925ed
+		summarizeBy: none
+		sourceColumn: resource_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimResource = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"resource_id"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Removed Duplicates1" = Table.Distinct(#"Removed Duplicates"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates1",{{"resource_id", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "resource_id"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "resource_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

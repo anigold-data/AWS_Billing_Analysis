@@ -1,0 +1,40 @@
+relationship AutoDetected_8202da6a-f4ac-4ebd-ab65-d92927daf2f9
+	fromColumn: FactsCost.'Dim_PricingModel.pricing_key'
+	toColumn: DimPricingModel.pricing_key
+
+relationship AutoDetected_685ec28e-1e5a-461d-a351-ac57452e4d84
+	fromColumn: FactsCost.'Dim_Project.project_key'
+	toColumn: DimProject.project_key
+
+relationship AutoDetected_6e13ea27-2212-4853-bdc7-f535303b6576
+	fromColumn: FactsCost.'Dim_Team.team_key'
+	toColumn: DimTeam.team_key
+
+relationship AutoDetected_d33304fd-ba3f-4502-8a3a-cb245395d48d
+	fromColumn: FactsCost.'Dim_Environment.environment_key'
+	toColumn: DimEnvironment.environment_key
+
+relationship AutoDetected_98d2a6b4-24a8-4aa9-adfa-ad1d7f76ee51
+	fromColumn: FactsCost.'Dim_Usage.usage_key'
+	toColumn: DimUsage.usage_key
+
+relationship AutoDetected_8b528333-8979-4de3-9617-cc12629ab358
+	fromColumn: FactsCost.'Dim_Resource.resource_key'
+	toColumn: DimResource.resource_key
+
+relationship AutoDetected_8e010963-070e-4072-9ab6-a5a960be332c
+	fromColumn: FactsCost.'Dim_Date.date_key'
+	toColumn: DimDate.date_key
+
+relationship AutoDetected_e5c5981f-a8dc-46a9-86cb-b1fc58640ed6
+	fromColumn: FactsCost.'Dim_Region.region_key'
+	toColumn: DimRegion.region_key
+
+relationship AutoDetected_16745bc7-036c-43dc-8f27-ba51961ebbb5
+	fromColumn: FactsCost.'Dim_Account.account_key'
+	toColumn: DimAccount.account_key
+
+relationship AutoDetected_2fd32864-7818-404a-bd9d-e9b57d0ef35a
+	fromColumn: FactsCost.'Dim_Service.service_key'
+	toColumn: DimService.service_key
+

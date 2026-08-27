@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "AWS_Billing_Analysis"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4406f741-a56c-4d0a-8744-b19638c5a0c6"
+  }
+}

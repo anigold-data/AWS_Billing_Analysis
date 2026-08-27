@@ -1,0 +1,40 @@
+/// Describes how usage was purchased which could be On-Demand, Reserved Instance, Savings Plan, or Spot
+table DimPricingModel
+	lineageTag: d7058801-13fa-4298-b766-e4e460eecc4a
+
+	column pricing_key
+		dataType: int64
+		formatString: 0
+		lineageTag: a91b5c31-0557-4906-a1b9-4ad288ff670a
+		summarizeBy: none
+		sourceColumn: pricing_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// How the usage was purchased: On-Demand, Reserved Instance, Savings Plan, or Spot
+	column pricing_model
+		dataType: string
+		lineageTag: d806cd73-5123-4f64-99f0-146cdbac8129
+		summarizeBy: none
+		sourceColumn: pricing_model
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimPricingModel = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"pricing_model"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates",{{"pricing_model", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "pricing_model"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "pricing_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

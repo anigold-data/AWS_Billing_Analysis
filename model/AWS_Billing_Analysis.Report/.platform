@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "AWS_Billing_Analysis"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "492de0ca-9180-4982-b3e1-e2c5c7d7898c"
+  }
+}

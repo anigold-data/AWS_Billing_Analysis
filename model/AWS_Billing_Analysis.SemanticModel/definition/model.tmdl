@@ -1,0 +1,39 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-GB
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Cloudcost_CUR","FactsCost","DimAccount","DimService","DimRegion","DimResource","DimUsage","DimEnvironment","DimTeam","DimProject","DimPricingModel","DimDate","pDataPath"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+annotation __TEdtr = 1
+
+ref table FactsCost
+ref table DimAccount
+ref table DimService
+ref table DimRegion
+ref table DimResource
+ref table DimUsage
+ref table DimEnvironment
+ref table DimTeam
+ref table DimProject
+ref table DimPricingModel
+ref table DimDate
+ref table _Measures
+
+ref role BU_DataPlatform
+ref role BU_Engineering
+ref role BU_Finance
+ref role BU_Marketing
+ref role BU_SharedServices
+ref role Executive
+
+ref cultureInfo en-GB
+

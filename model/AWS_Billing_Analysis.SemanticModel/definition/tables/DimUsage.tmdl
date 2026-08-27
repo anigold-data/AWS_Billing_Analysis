@@ -1,0 +1,50 @@
+/// Describes the specific metered activity within a service and the unit it's measured in
+table DimUsage
+	lineageTag: fa719faa-1640-43c6-90b7-03775589dcc4
+
+	column usage_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 51503d35-4e3f-457b-8a9c-a583a97bee51
+		summarizeBy: none
+		sourceColumn: usage_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The specific metered activity (e.g. BoxUsage:m5.large)
+	column usage_type
+		dataType: string
+		lineageTag: b86c7471-32f4-440e-8506-13ad04dc108f
+		summarizeBy: none
+		sourceColumn: usage_type
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The unit that usage is measured in (Hrs, GB, Requests, etc.)
+	column usage_unit
+		dataType: string
+		lineageTag: 1e7c0a51-c6de-46c3-bb08-29b2472456c1
+		summarizeBy: none
+		sourceColumn: usage_unit
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimUsage = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"usage_type", "usage_unit"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Removed Duplicates1" = Table.Distinct(#"Removed Duplicates"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates1",{{"usage_type", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "usage_type", "usage_unit"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "usage_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

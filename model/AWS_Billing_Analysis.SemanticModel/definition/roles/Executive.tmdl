@@ -1,0 +1,13 @@
+role Executive
+	modelPermission: read
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = read
+
+	tablePermission DimAccount
+
+		columnPermission linked_account_id = read
+
+	annotation PBI_Id = e71c012fe20f42129e0c29ef4142b77e
+

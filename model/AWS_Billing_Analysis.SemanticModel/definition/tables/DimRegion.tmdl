@@ -1,0 +1,105 @@
+/// Describes each AWS region where usage occurred
+table DimRegion
+	lineageTag: cb378423-51b7-46c6-bc39-493fd358da98
+
+	column region_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 0eae34f7-5056-451f-8418-26dff171f4d2
+		summarizeBy: none
+		sourceColumn: region_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The AWS region where the usage occurred (e.g. us-east-1)
+	column region
+		dataType: string
+		lineageTag: 7c789b9e-2c58-431b-a6a8-4abe704fcbc6
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	/// City where the AWS region is located
+	column city
+		dataType: string
+		lineageTag: c7459350-1ee2-48ec-bd69-503449c3c2ef
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Country where the AWS region is located
+	column country
+		dataType: string
+		lineageTag: dd5d7ebb-8f80-4cc5-91b6-1d56d17ceb5d
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column latitude =
+			
+			SWITCH(
+			    DimRegion[city],
+			    "Singapore", 1.3521,
+			    "Sydney", -33.8688,
+			    "Montreal", 45.5017,
+			    "Frankfurt", 50.1109,
+			    "Dublin", 53.3498,
+			    "São Paulo", -23.5505,
+			    "Virginia", 37.4316,
+			    "Oregon", 43.8041,
+			    BLANK()
+			)
+		lineageTag: a88a57a6-84f4-421e-8b4e-db0a168c9d19
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitude =
+			
+			SWITCH(
+			    DimRegion[city],
+			    "Singapore", 103.8198,
+			    "Sydney", 151.2093,
+			    "Montreal", -73.5673,
+			    "Frankfurt", 8.6821,
+			    "Dublin", -6.2603,
+			    "São Paulo", -46.6333,
+			    "Virginia", -78.6569,
+			    "Oregon", -120.5542,
+			    BLANK()
+			)
+		lineageTag: edb15590-7c06-452e-a62e-11be779e5468
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DimRegion = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"region", "availability_zone"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Removed Columns" = Table.RemoveColumns(#"Removed Duplicates",{"availability_zone"}),
+				    #"Removed Duplicates1" = Table.Distinct(#"Removed Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates1",{{"region", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "region"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "region_key"}}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Renamed Columns", "City", each if [region] = "ap-southeast-1" then "Singapore" else if [region] = "ap-southeast-2" then "Sydney" else if [region] = "ca-central-1" then "Montreal" else if [region] = "eu-central-1" then "Frankfurt" else if [region] = "eu-west-1" then "Dublin" else if [region] = "sa-east-1" then "São Paulo" else if [region] = "us-east-1" then "Virginia" else if [region] = "us-west-2" then "Oregon" else "Undefined"),
+				    #"Added Conditional Column1" = Table.AddColumn(#"Added Conditional Column", "Country", each if [City] = "Virginia" then "United States" else if [City] = "Oregon" then "United States" else if [City] = "Montreal" then "Canada" else if [City] = "Dublin" then "Ireland" else if [City] = "Frankfurt" then "Germany" else if [City] = "Singapore" then "Singapore" else if [City] = "Sydney" then "Australia" else if [City] = "São Paulo" then "Brazil" else "Undefined"),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Added Conditional Column1",{{"City", "city"}, {"Country", "country"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

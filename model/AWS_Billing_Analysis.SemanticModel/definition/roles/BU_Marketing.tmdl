@@ -1,0 +1,13 @@
+role BU_Marketing
+	modelPermission: read
+
+	tablePermission DimAccount = [business_unit] == "Marketing"
+
+		columnPermission linked_account_id = none
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = none
+
+	annotation PBI_Id = 1355852b8a3d4df7802139cd94b9dd7b
+

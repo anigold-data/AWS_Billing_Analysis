@@ -1,0 +1,39 @@
+/// Describes the team e.g analytics, payments, coreAPI
+table DimTeam
+	lineageTag: b95073c1-d84f-43f9-8474-ec6b3831752c
+
+	column team_key
+		dataType: int64
+		formatString: 0
+		lineageTag: aecf184a-b8a7-4228-9ec5-75c0af767f92
+		summarizeBy: none
+		sourceColumn: team_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column tag_team
+		dataType: string
+		lineageTag: a9877c76-80c8-4b1a-baac-8e1d4e59fbbe
+		summarizeBy: none
+		sourceColumn: tag_team
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimTeam = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"tag_team"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates",{{"tag_team", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "tag_team"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "team_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

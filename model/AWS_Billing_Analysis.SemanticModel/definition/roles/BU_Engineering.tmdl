@@ -1,0 +1,13 @@
+role BU_Engineering
+	modelPermission: read
+
+	tablePermission DimAccount = [business_unit] == "Engineering"
+
+		columnPermission linked_account_id = none
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = none
+
+	annotation PBI_Id = 1fc0d5b982c44b6780ae7d99a23a1099
+

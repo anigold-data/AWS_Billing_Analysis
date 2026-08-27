@@ -1,0 +1,13 @@
+role BU_DataPlatform
+	modelPermission: read
+
+	tablePermission DimAccount = [business_unit] == "DataPlatform"
+
+		columnPermission linked_account_id = none
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = none
+
+	annotation PBI_Id = 21a6da018d7d45deb8adbcf1c6ad0666
+

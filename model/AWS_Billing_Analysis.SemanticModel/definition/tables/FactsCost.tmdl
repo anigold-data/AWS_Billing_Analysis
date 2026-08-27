@@ -1,0 +1,201 @@
+/// This is the central transaction table, one row per resource/usage-type/day, holding the actual cost and usage numbers everything else connects to
+table FactsCost
+	lineageTag: 63178748-988e-4cd4-ac36-b7ffcc45d4fe
+
+	column 'Dim_PricingModel.pricing_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 3d3fabb6-3597-4485-ab5a-31a6530dcc5b
+		summarizeBy: none
+		sourceColumn: Dim_PricingModel.pricing_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Project.project_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 38db6fd8-5e0e-46a2-ab0e-1d9bfd3d5897
+		summarizeBy: none
+		sourceColumn: Dim_Project.project_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Team.team_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: fe0bf7f7-82b4-4ff3-b3fc-86df0cc08f5c
+		summarizeBy: none
+		sourceColumn: Dim_Team.team_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Environment.environment_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 451cd578-8df8-416d-a292-b2e2ed796011
+		summarizeBy: none
+		sourceColumn: Dim_Environment.environment_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Usage.usage_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 5e596e10-ae30-4483-8f02-80dea182956a
+		summarizeBy: none
+		sourceColumn: Dim_Usage.usage_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Resource.resource_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: f037625a-0589-4bbe-abc4-ba0e09fb2002
+		summarizeBy: none
+		sourceColumn: Dim_Resource.resource_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Date.date_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 51bb7b79-fb3b-44f0-829a-76c601513cfe
+		summarizeBy: none
+		sourceColumn: Dim_Date.date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Region.region_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 708910ff-5b42-43e7-bb43-a73660d8a7f9
+		summarizeBy: none
+		sourceColumn: Dim_Region.region_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Account.account_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: a38f5438-8c10-4eef-ac2e-7aaa3c8f7a61
+		summarizeBy: none
+		sourceColumn: Dim_Account.account_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Service.service_key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 34679acb-7ab0-4477-99cb-87b56655a256
+		summarizeBy: none
+		sourceColumn: Dim_Service.service_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Cost with upfront Reserved Instance/Savings Plan payments spread evenly over time
+	column amortized_cost
+		dataType: double
+		formatString: #,##0.00
+		lineageTag: acfd258c-3566-4d3b-a5e4-8634c641bb0e
+		summarizeBy: none
+		sourceColumn: amortized_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// The raw cost as it appears on the AWS bill, before any discount spreading
+	column unblended_cost
+		dataType: double
+		formatString: #,##0.00
+		lineageTag: 82d8789f-1043-4119-8644-3a1eeadd82f1
+		summarizeBy: none
+		sourceColumn: unblended_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// The price charged per unit of usage
+	column unit_rate
+		dataType: double
+		formatString: #,##0.00
+		lineageTag: 84b1cd48-e91d-45cf-bab2-b3899989364b
+		summarizeBy: none
+		sourceColumn: unit_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// How much was consumed, in the usage_unit for that row
+	column usage_quantity
+		dataType: double
+		formatString: #,##0.00
+		lineageTag: e8453411-d6bc-416d-be38-d622b6666741
+		summarizeBy: none
+		sourceColumn: usage_quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition FactsCost = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Merged Queries" = Table.NestedJoin(Source, {"service_code"}, DimService, {"service_code"}, "Dim_Service", JoinKind.LeftOuter),
+				    #"Expanded Dim_Service" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Service", {"service_key"}, {"Dim_Service.service_key"}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Expanded Dim_Service", {"payer_account_id"}, DimAccount, {"payer_account_id"}, "Dim_Account", JoinKind.LeftOuter),
+				    #"Expanded Dim_Account" = Table.ExpandTableColumn(#"Merged Queries1", "Dim_Account", {"account_key"}, {"Dim_Account.account_key"}),
+				    #"Merged Queries2" = Table.NestedJoin(#"Expanded Dim_Account", {"region"}, DimRegion, {"region"}, "Dim_Region", JoinKind.LeftOuter),
+				    #"Expanded Dim_Region" = Table.ExpandTableColumn(#"Merged Queries2", "Dim_Region", {"region_key"}, {"Dim_Region.region_key"}),
+				    #"Merged Queries3" = Table.NestedJoin(#"Expanded Dim_Region", {"resource_id"}, DimResource, {"resource_id"}, "Dim_Resource", JoinKind.LeftOuter),
+				    #"Expanded Dim_Resource" = Table.ExpandTableColumn(#"Merged Queries3", "Dim_Resource", {"resource_key"}, {"Dim_Resource.resource_key"}),
+				    #"Merged Queries4" = Table.NestedJoin(#"Expanded Dim_Resource", {"usage_type"}, DimUsage, {"usage_type"}, "Dim_Usage", JoinKind.LeftOuter),
+				    #"Merged Queries5" = Table.NestedJoin(#"Merged Queries4", {"tag_environment"}, DimEnvironment, {"tag_environment"}, "Dim_Environment", JoinKind.LeftOuter),
+				    #"Expanded Dim_Usage" = Table.ExpandTableColumn(#"Merged Queries5", "Dim_Usage", {"usage_key"}, {"Dim_Usage.usage_key"}),
+				    #"Expanded Dim_Environment" = Table.ExpandTableColumn(#"Expanded Dim_Usage", "Dim_Environment", {"environment_key"}, {"Dim_Environment.environment_key"}),
+				    #"Merged Queries6" = Table.NestedJoin(#"Expanded Dim_Environment", {"tag_team"}, DimTeam, {"tag_team"}, "Dim_Team", JoinKind.LeftOuter),
+				    #"Expanded Dim_Team" = Table.ExpandTableColumn(#"Merged Queries6", "Dim_Team", {"team_key"}, {"Dim_Team.team_key"}),
+				    #"Merged Queries7" = Table.NestedJoin(#"Expanded Dim_Team", {"tag_project"}, DimProject, {"tag_project"}, "Dim_Project", JoinKind.LeftOuter),
+				    #"Expanded Dim_Project" = Table.ExpandTableColumn(#"Merged Queries7", "Dim_Project", {"project_key"}, {"Dim_Project.project_key"}),
+				    #"Merged Queries8" = Table.NestedJoin(#"Expanded Dim_Project", {"pricing_model"}, DimPricingModel, {"pricing_model"}, "Dim_PricingModel", JoinKind.LeftOuter),
+				    #"Expanded Dim_PricingModel" = Table.ExpandTableColumn(#"Merged Queries8", "Dim_PricingModel", {"pricing_key"}, {"Dim_PricingModel.pricing_key"}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Expanded Dim_PricingModel",{"Dim_PricingModel.pricing_key", "Dim_Project.project_key", "Dim_Team.team_key", "Dim_Environment.environment_key", "Dim_Usage.usage_key", "Dim_Resource.resource_key", "Dim_Region.region_key", "Dim_Account.account_key", "Dim_Service.service_key", "amortized_cost", "unblended_cost", "unit_rate", "usage_quantity", "usage_date"}),
+				    #"Merged Queries9" = Table.NestedJoin(#"Removed Other Columns", {"usage_date"}, DimDate, {"date"}, "Dim_Date", JoinKind.LeftOuter),
+				    #"Expanded Dim_Date" = Table.ExpandTableColumn(#"Merged Queries9", "Dim_Date", {"date_key"}, {"Dim_Date.date_key"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Dim_Date",{"usage_date"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Dim_PricingModel.pricing_key", "Dim_Project.project_key", "Dim_Team.team_key", "Dim_Environment.environment_key", "Dim_Usage.usage_key", "Dim_Resource.resource_key", "Dim_Date.date_key", "Dim_Region.region_key", "Dim_Account.account_key", "Dim_Service.service_key", "amortized_cost", "unblended_cost", "unit_rate", "usage_quantity"}),
+				    #"Rounded Off" = Table.TransformColumns(#"Reordered Columns",{{"amortized_cost", each Number.Round(_, 2), type number}}),
+				    #"Rounded Off1" = Table.TransformColumns(#"Rounded Off",{{"unblended_cost", each Number.Round(_, 2), type number}}),
+				    #"Rounded Off2" = Table.TransformColumns(#"Rounded Off1",{{"unit_rate", each Number.Round(_, 2), type number}}),
+				    #"Rounded Off3" = Table.TransformColumns(#"Rounded Off2",{{"usage_quantity", each Number.Round(_, 2), type number}})
+				in
+				    #"Rounded Off3"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

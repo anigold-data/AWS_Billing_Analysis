@@ -1,0 +1,280 @@
+/// Houses all DAX measures
+table _Measures
+	lineageTag: f8da8660-a3cd-4a3e-b77e-cc53a8477663
+
+	/// Calculates the total AWS spend by summing the unblended cost from the cost fact table
+	measure 'Total Cost' = SUM(FactsCost[unblended_cost])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: eaf5fa51-b5e9-4fb3-a8bb-a1e7777268c1
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Percentage change in cost compared to last month
+	measure 'MoM Cost Change %' = ```
+			
+			VAR Current_Cost = [Total Cost]
+			VAR Previous_Cost = 
+			CALCULATE(
+			    [Total Cost], 
+			    PARALLELPERIOD(DimDate[date], -1, MONTH)
+			)
+			
+			RETURN
+			DIVIDE(
+			    Current_Cost - Previous_Cost, Previous_Cost
+			)
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: ac4d6187-4daf-4841-8e7c-d1a143244422
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	/// Compares AWS spending with the same period from the previous year.
+	measure 'YoY Cost Change %' = ```
+			
+			VAR Current_Year = [Total Cost]
+			VAR Previous_Year = CALCULATE(
+			    [Total Cost], 
+			    SAMEPERIODLASTYEAR(
+			        DimDate[date]
+			    )
+			)
+			RETURN
+			DIVIDE(
+			    Current_Year - Previous_Year, 
+			    Previous_Year
+			)
+			```
+		formatString: #,##0.00 %
+		lineageTag: 771a6713-3b1d-4129-8c2f-37f133bf1975
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Calculates the average daily cost over the last 7 days.
+	measure 'Rolling 7-day Avg Cost' =
+			
+			AVERAGEX(
+			    DATESINPERIOD(
+			        DimDate[date],
+			        MAX(DimDate[date]),
+			        -7,
+			        DAY
+			    ),
+			    [Total Cost]
+			)
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 65866d1e-5f31-4864-b6a5-d5dccb04e2db
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Shows the AWS cost after spreading commitment costs (Reserved Instances/Savings Plans) over the period they are used.
+	measure 'Total Amortized Cost' =
+			
+			SUM(FactsCost[amortized_cost])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: ed5d2044-e349-488a-a34f-76c407e3c985
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// The total quantity consumed for whatever is currently filtered
+	measure 'Total Usage' =
+			
+			SUM(FactsCost[usage_quantity])
+		formatString: 0.00
+		lineageTag: 1613d1ac-464a-4318-965b-1f1f766f4776
+
+	/// Calculates the difference between the original cost(unblended cost) and the amortized cost.
+	measure 'Total Savings' =
+			
+			[Total Cost] - [Total Amortized Cost]
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 88c8cbb3-943a-4989-80b8-e3d403c41eb2
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Calculates the percentage of cost saved compared to paying the full price.
+	measure 'Savings %' =
+			
+			DIVIDE(
+			    [Total Savings],
+			    [Total Cost]
+			)
+		formatString: #,##0.00 %
+		lineageTag: 5a6f4329-a6d7-45e5-bec2-93e4513a23ca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Shows the daily cost incurred on average
+	measure 'Average Daily Cost' =
+			
+			AVERAGEX(
+			VALUES(DimDate[Date]),
+			[Total Cost]
+			)
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 75b41392-685c-4de1-b045-7f38933a7da7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Adds up costs continuously over time. Shows total spending accumulated so far.
+	measure 'Running Total' =
+			
+			CALCULATE(
+			    [Total Cost],
+			    FILTER(
+			        ALL(DimDate),
+			        DimDate[Date] <= MAX(DimDate[Date])
+			    )
+			)
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 403a3328-a9d1-4a96-9130-189030fb36ea
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Calculates how much each account, team, service, or category contributes to total cost.
+	measure 'Cost Contribution %' =
+			
+			DIVIDE(
+			[Total Cost],
+			CALCULATE(
+			[Total Cost],
+			ALL(DimAccount)
+			)
+			)
+		formatString: #,##0.00 %
+		lineageTag: 297ec34f-3145-4742-881c-a056038ff9ab
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Sows the average price paid per unit of usage
+	measure 'Cost per Unit' = DIVIDE([Total Cost], [Total Usage])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: fa5120b4-c693-4510-b11d-5652f5f01cae
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// How many individual resources (servers, buckets, etc.)
+	measure 'Distinct Resources' = DISTINCTCOUNT(DimResource[resource_id])
+		formatString: 0
+		lineageTag: 92395454-e00f-4c79-9e70-2f5f3a874575
+
+	/// Calculates the average monthly cost over the trailing 3 months
+	measure 'Rolling 3-Month Avg Cost' =
+			
+			AVERAGEX(
+			    DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -3, MONTH),
+			    [Total Cost]
+			)
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 4ccbd560-5a55-4c44-be90-68aef8edeaad
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Total cost from the start of the current month to today
+	measure 'MTD Cost' = TOTALMTD([Total Cost], DimDate[Date])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: ba33689d-02d8-471b-a0e7-10c903f4dd23
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Total cost from the start of the current quarter to today
+	measure 'QTD Cost' = TOTALQTD([Total Cost], DimDate[Date])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: a612be3e-a3fd-4cd9-9d77-5ed8056db52d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Total cost from the start of the current year to today
+	measure 'YTD Cost' = TOTALYTD([Total Cost], DimDate[Date])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: db7594ea-3868-47c4-b5dd-642cc579ce36
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Calculates the difference between the current cost and the previous month's cost.
+	measure 'Cost Variance vs Prior Month' = ```
+			
+			VAR Prior_Month_Cost = CALCULATE([Total Cost], DATEADD(DimDate[date], -1, MONTH))
+			RETURN
+			[Total Cost] - Prior_Month_Cost
+			
+			```
+		formatString: "$"#,##0.00
+		lineageTag: f8187397-5bf9-4269-ab1d-42c0c9ff6de1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Calculates the percentage increase or decrease compared with the previous month.
+	measure 'Cost Variance %' =
+			
+			VAR Prior_Month_Cost = CALCULATE([Total Cost], DATEADD(DimDate[date], -1, MONTH))
+			RETURN
+			DIVIDE([Cost Variance vs Prior Month], Prior_Month_Cost)
+		formatString: +0.0%; -0.0%; 0.0%
+		lineageTag: 74e50405-daef-4068-9b41-3a85dd04de60
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	/// Measures how much daily AWS costs normally move away from the average.
+	measure 'Daily Cost StdDev' =
+			
+			STDEVX.P(
+			    DATESINPERIOD(
+			        DimDate[Date],
+			        MAX(DimDate[Date]),
+			        -30,
+			        DAY
+			    ),
+			    [Total Cost]
+			)
+		formatString: "$"#,##0.00
+		lineageTag: 7e1f6c2f-0d9a-4932-b7e7-8ef7326f5661
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Total cost paid at standard On-Demand rates
+	measure 'On-Demand Cost' = CALCULATE ([Total Cost], DimPricingModel[pricing_model] = "On-Demand")
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 7328250f-9a8a-4492-a496-e90af2fa6e6c
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// The average price paid per unit of usage — shows if things are getting cheaper or pricier
+	measure 'Committed Cost' = CALCULATE([Total Cost], DimPricingModel[pricing_model] IN {"Reserved Instance", "Savings Plan"})
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: fb398bfc-fa20-4f4b-9571-f7d47d477e8f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	/// Calculates the percentage of AWS spending covered by commitments such as Reserved Instances and Savings Plans.
+	measure 'Committed Spend Ratio' = DIVIDE([Committed Cost], [Total Cost])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f1978425-3fa3-4d4e-baa9-a8bcdb367a40
+
+	/// How much is being saved overall by using commitments instead of On-Demand pricing
+	measure 'Effective Savings Rate' =
+			
+			DIVIDE(
+			    [Total Cost] - [Total Amortized Cost],
+			    [Total Cost]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 6d30a36d-223e-498d-99e1-186782c1ce6b
+
+	column Column
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: cfcd0278-85b0-4fda-ad33-0fa5d62431e9
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = d047bbe4fb4f4e7b83ab05116a57849f
+

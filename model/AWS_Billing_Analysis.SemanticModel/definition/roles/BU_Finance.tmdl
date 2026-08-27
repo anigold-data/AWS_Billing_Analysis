@@ -1,0 +1,13 @@
+role BU_Finance
+	modelPermission: read
+
+	tablePermission DimAccount = [business_unit] == "Finance"
+
+		columnPermission linked_account_id = read
+
+	tablePermission FactsCost
+
+		columnPermission amortized_cost = read
+
+	annotation PBI_Id = dbdb257e1e2b449595c89be36952505c
+

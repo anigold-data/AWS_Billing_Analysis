@@ -1,0 +1,49 @@
+/// Describes each AWS service being billed (EC2, S3, RDS, etc.)
+table DimService
+	lineageTag: 0ae5ce15-8fa8-4031-8add-0f94b591f56a
+
+	column service_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 09bf3c1d-0394-4a63-a701-f7afa156454a
+		summarizeBy: none
+		sourceColumn: service_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// AWS's internal service identifier (e.g. AmazonEC2)
+	column service_code
+		dataType: string
+		lineageTag: 9ea538a7-0c61-4497-acce-9af2a4f9e5ef
+		summarizeBy: none
+		sourceColumn: service_code
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Human-readable service name (e.g. EC2 - Compute)
+	column service_name
+		dataType: string
+		lineageTag: 07912c57-349a-483b-9593-9ac9a70d2b51
+		summarizeBy: none
+		sourceColumn: service_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimService = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"service_code", "service_name"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates",{{"service_code", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "service_code", "service_name"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "service_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

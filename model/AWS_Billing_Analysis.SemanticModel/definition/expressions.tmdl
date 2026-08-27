@@ -1,0 +1,21 @@
+expression Cloudcost_CUR =
+		let
+		    Source = Csv.Document(File.Contents(pDataPath & "aws_cloudcost_cur_dataset.csv"),[Delimiter=",", Columns=22, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"usage_date", type date}, {"billing_period", type date}, {"payer_account_id", Int64.Type}, {"linked_account_id", Int64.Type}, {"account_name", type text}, {"business_unit", type text}, {"service_code", type text}, {"service_name", type text}, {"usage_type", type text}, {"usage_unit", type text}, {"region", type text}, {"availability_zone", type text}, {"resource_id", type text}, {"pricing_model", type text}, {"usage_quantity", type number}, {"unit_rate", type number}, {"unblended_cost", type number}, {"amortized_cost", type number}, {"currency_code", type text}, {"tag_environment", type text}, {"tag_team", type text}, {"tag_project", type text}})
+		in
+		    #"Changed Type"
+	lineageTag: 6cba66ff-92a1-45a0-b9e8-96fc4272a895
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+/// Parametrization of the file directory
+expression pDataPath = "C:\Users\adeda\OneDrive\Desktop\AWS_Billing_Analysis\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 5baf4b3b-3dfc-4d11-bb41-e8136082249a
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,197 @@
+/// A calendar table used to filter and group cost data by day, month, quarter, and year, and for time-intelligence measures
+table DimDate
+	lineageTag: b4703383-7eae-4c4f-b6a9-8215f0494f94
+	dataCategory: Time
+
+	/// Unique identifier for each record
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 07471e66-c430-45f0-be18-ba30f1750ce3
+		summarizeBy: none
+		sourceColumn: date_key
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The calendar date, one row per day
+	column date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 72692a29-531d-42a2-b644-c0dd2fb63de3
+		summarizeBy: none
+		sourceColumn: date
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation TabularEditor_MarkAsDateKey = 1
+
+	/// Calendar year
+	column calendar_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1178788e-1a45-4d9a-9a3b-db16a5e9e7f3
+		summarizeBy: none
+		sourceColumn: calendar_year
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Month name
+	column month_name
+		dataType: string
+		lineageTag: 8c904ed9-2dde-4107-9ee8-0dcea0de8dc2
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month_number
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Month Number
+	column month_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 40bc08a7-2ab3-4b9e-831c-a80b6345546c
+		summarizeBy: none
+		sourceColumn: month_number
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day name
+	column weekday
+		dataType: string
+		lineageTag: 46435adc-1434-4989-a06b-49debac6251b
+		summarizeBy: none
+		sourceColumn: weekday
+
+		annotation SummarizationSetBy = Automatic
+
+	column weekday_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 34c71c4a-f1c4-4101-b6af-89e3615e3356
+		summarizeBy: none
+		sourceColumn: weekday_number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Calendar quarter (Q1–Q4)
+	column quarter
+		dataType: string
+		lineageTag: b062b9b0-037d-4c92-8393-b84d0435b11d
+		summarizeBy: none
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_year
+		dataType: string
+		lineageTag: 698794fb-97a2-47fd-8ad5-8e8227608c31
+		summarizeBy: none
+		sourceColumn: month_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_year_sort
+		dataType: int64
+		formatString: 0
+		lineageTag: c53dd264-9b5f-4583-957b-65cf882367b3
+		summarizeBy: none
+		sourceColumn: month_year_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDate = m
+		mode: import
+		source = ```
+				let
+				    MinDate = Date.From(List.Min(Cloudcost_CUR[usage_date])),
+				    MaxDate = Date.From(List.Max(Cloudcost_CUR[usage_date])),
+				
+				    DateList = List.Dates(
+				        MinDate,
+				        Duration.Days(MaxDate - MinDate) + 1,
+				        #duration(1,0,0,0)
+				    ),
+				
+				    DateTable = Table.FromList(
+				        DateList,
+				        Splitter.SplitByNothing(),
+				        {"Date"}
+				    ),
+				
+				    AddYear = Table.AddColumn(
+				        DateTable,
+				        "Calendar Year",
+				        each Date.Year([Date]),
+				        Int64.Type
+				    ),
+				
+				    AddMonthNumber = Table.AddColumn(
+				        AddYear,
+				        "Month Number",
+				        each Date.Month([Date]),
+				        Int64.Type
+				    ),
+				
+				    AddMonthName = Table.AddColumn(
+				        AddMonthNumber,
+				        "Month Name",
+				        each Date.ToText([Date],"MMMM"),
+				        type text
+				    ), 
+				
+				    AddMonthYear = Table.AddColumn(
+				        AddMonthName,
+				        "Month Year",
+				        each Date.ToText([Date],"MMM yyyy"),
+				        type text
+				    ),
+				
+				    AddMonthYearSort = Table.AddColumn(
+				        AddMonthYear,
+				        "Month Year Sort",
+				        each Date.Year([Date]) * 100 + Date.Month([Date]),
+				        Int64.Type
+				    ),
+				
+				    AddWeekday = Table.AddColumn(
+				        AddMonthYearSort,
+				        "Weekday",
+				        each Date.ToText([Date],"dddd"),
+				        type text
+				    ),
+				
+				    AddWeekdayNumber = Table.AddColumn(
+				        AddWeekday,
+				        "Weekday Number",
+				        each Date.DayOfWeek([Date]) + 1,
+				        Int64.Type
+				    ),
+				
+				    AddQuarter = Table.AddColumn(
+				        AddWeekdayNumber,
+				        "Quarter",
+				        each "Q" & Number.ToText(Number.RoundUp(Date.Month([Date])/3))
+				    ),
+				    #"Changed Type" = Table.TransformColumnTypes(AddQuarter,{{"Date", type date}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Changed Type", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "Date", "Calendar Year", "Month Name", "Month Number", "Weekday", "Weekday Number", "Quarter"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "date_key"}, {"Date", "date"}, {"Calendar Year", "calendar_year"}, {"Month Name", "month_name"}, {"Month Number", "month_number"}, {"Weekday", "weekday"}, {"Weekday Number", "weekday_number"}, {"Quarter", "quarter"}, {"Month Year", "month_year"}, {"Month Year Sort", "month_year_sort"}})
+				in
+				    #"Renamed Columns"
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

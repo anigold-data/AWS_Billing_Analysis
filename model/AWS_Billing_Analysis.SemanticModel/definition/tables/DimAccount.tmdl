@@ -1,0 +1,69 @@
+/// Describes each AWS account; which business unit, team, project, and environment it belongs
+table DimAccount
+	lineageTag: 8a514261-1fb0-4726-ba7c-5a5423aee513
+
+	column account_key
+		dataType: int64
+		formatString: 0
+		lineageTag: a476e584-b9e7-40e3-8f08-eebbd9d0065a
+		summarizeBy: none
+		sourceColumn: account_key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The organization's master/payer account ID
+	column payer_account_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 67030910-4afa-48ca-b977-8fa344d906bc
+		summarizeBy: none
+		sourceColumn: payer_account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The AWS account ID this data belongs to
+	column linked_account_id
+		dataType: int64
+		formatString: 0.0
+		lineageTag: 1f5dcae9-f287-4029-b25b-2f9ac3859bec
+		summarizeBy: none
+		sourceColumn: linked_account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Friendly name of the AWS account (e.g. acct-eng-prod)
+	column account_name
+		dataType: string
+		lineageTag: de074b35-f6ff-456b-9175-a40b16ada933
+		summarizeBy: none
+		sourceColumn: account_name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The team/department the account rolls up to (used for RLS)
+	column business_unit
+		dataType: string
+		lineageTag: 1e632a45-8bfd-4dd4-9983-45eb4db46ddd
+		summarizeBy: none
+		sourceColumn: business_unit
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimAccount = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"payer_account_id", "linked_account_id", "account_name", "business_unit"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates",{{"account_name", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "payer_account_id", "linked_account_id", "account_name", "business_unit"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "account_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

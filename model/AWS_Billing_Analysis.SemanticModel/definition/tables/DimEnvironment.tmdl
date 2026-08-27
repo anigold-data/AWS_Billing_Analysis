@@ -1,0 +1,40 @@
+/// Describes the environment e.g staging, production, sandbox.
+table DimEnvironment
+	lineageTag: 091baba8-17aa-4409-b038-1f3ab0745695
+
+	column environment_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 464da3b3-3447-415c-b826-3b0c20ab17f1
+		summarizeBy: none
+		sourceColumn: environment_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column tag_environment
+		dataType: string
+		lineageTag: 04522e35-2230-477b-b606-62b81659da37
+		summarizeBy: none
+		sourceColumn: tag_environment
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimEnvironment = m
+		mode: import
+		source =
+				let
+				    Source = Cloudcost_CUR,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"usage_date", "tag_environment"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Removed Other Columns",{"usage_date"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Columns"),
+				    #"Sorted Rows" = Table.Sort(#"Removed Duplicates",{{"tag_environment", Order.Ascending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "Index", 0, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "tag_environment"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "environment_key"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
