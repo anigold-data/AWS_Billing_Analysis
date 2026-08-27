@@ -45,7 +45,7 @@ rows contained distinct decimal values because of high decimal places.
 
 The observed numeric measurement columns were rounded off to 2d.p to
 reduce unnecessary decimal precision. This consequently reduced the
-number of distinct values stored by VertiPaq and improved compression
+number of distinct values stored by VertiPaq and improved compression.
 
 The observed columns are:
 
