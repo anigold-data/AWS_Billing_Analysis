@@ -18,7 +18,7 @@ jobs:
 
       - name: Export model metadata
         run: |
-          .\TE\TabularEditor.exe "model/AWS_Billing_Analysis.SemanticModel" -M "docs/model-metadata.json"
+            .\TE\TabularEditor.exe "model/AWS_Billing_Analysis.SemanticModel" -X "docs/model-metadata.json"
 
       - name: Commit updated documentation
         run: |
